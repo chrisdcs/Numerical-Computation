@@ -24,6 +24,8 @@ def gradient_descent(X,y,theta,alpha = 0.0005,num_iters=1000):
     for i in range(num_iters):
         #Grad function in vectorized form
         h = X @ theta
+
+        # update parameters by gradient descent
         theta = theta - alpha * (1/m)* (X.T @ (h-y))
 
         #Cost and intermediate values for each iteration
@@ -77,5 +79,5 @@ ax.view_init(45, 45)
 ax = fig.add_subplot(1, 2, 2)
 ax.contour(T0, T1, Z, 70, cmap = 'jet')
 ax.quiver(theta_0[:-1], theta_1[:-1], anglesx, anglesy, scale_units = 'xy', angles = 'xy', scale = 1, color = 'r', alpha = .9)
-
+# plt.axis('equal')
 plt.show()
