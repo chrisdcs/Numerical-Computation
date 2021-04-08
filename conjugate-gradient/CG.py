@@ -40,7 +40,7 @@ for n in D:
     # initial point
     x.append(np.zeros(n))
     
-    # initial residual
+    # initial residual/gradient 
     r = A[-1] @ x[-1] - b
     
     p = -r

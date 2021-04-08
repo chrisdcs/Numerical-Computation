@@ -23,5 +23,5 @@ while True:
 """
 
 # loop over image color channels
-for i in range():
+for i in range(3):
     USVi = np.linalg.svd(image[:,:,i])
