@@ -1,2 +1,3 @@
 # Cubic Spline
 ![alt text](https://github.com/chrisdcs/Numerical-Computation/blob/main/cubic-splines/sine.png)
+![alt text](https://github.com/chrisdcs/Numerical-Computation/blob/main/cubic-splines/swiss-roll.png)
