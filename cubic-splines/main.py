@@ -28,7 +28,7 @@ norm = np.linalg.norm(data,2,axis=1)
 data = data[np.argsort(norm)]
 
 # randomly choose n1 points
-n1 = 10
+n1 = 5
 # index = np.random.choice(np.arange(n),n1)
 x = data[:,0]
 y = data[:,1]
