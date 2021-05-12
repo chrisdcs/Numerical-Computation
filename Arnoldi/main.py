@@ -35,14 +35,10 @@ u = y
 k = 8
 tol = 1e-10
 gamma = 0
-iters = 100
+iters = 200
 for _ in range(iters):
     y_,lam0,lam1 = Arnodi(A, k, u)
-    gamma = -abs(lam1/lam0)**_
-    if np.isnan(gamma) or np.isinf(gamma):
-        gamma = 0
-    if abs(gamma) > 1:
-        gamma = -0.1
+    # gamma = -abs(lam1/lam0)**_
     u = (1-gamma) * y_ + gamma * y
     y = y_
     err1 = abs(lam0 - max(true_eig))

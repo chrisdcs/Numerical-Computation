@@ -33,6 +33,8 @@ def Arnodi(A,k,b):
     u = abs(u)
     v = abs(v)
     
-    q = Q[:,:-1] @ v[:,0]
+    idx = np.argsort(u)[::-1]
     
-    return q,u[0],u[1]
+    q = Q[:,:-1] @ v[:,idx[0]]
+    
+    return q,u[idx[0]],u[idx[1]]
