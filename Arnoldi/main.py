@@ -6,50 +6,33 @@ Created on Mon May 10 10:49:50 2021
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-from utils import Arnodi
+from utils import Arnoldi, plot_results, load_sparse_matrix
 
 # generate matrix
-a = np.linspace(1,1000,1000).astype('int')
-A = np.diag(a*(-1)**a)
+# a = np.linspace(1,1000,1000).astype('int')
+# A = np.diag(a*(-1)**a)
 
-# dim = 1000
-# A = np.random.rand(dim,dim)
+# A = load_sparse_matrix('ss1.mat')
 
-# compute the true eigen values
-true_eig,true_eig_vec = np.linalg.eig(A)
-true_eig = abs(true_eig)
-true_eig_vec = abs(true_eig_vec)
+A = load_sparse_matrix('ifiss_mat.mat')
 
-# arnoldi iteration
-# matrix must be square??
 m = A.shape[0]
-
-n = m
-err = []
 
 y = np.random.rand(m)
 y = y/np.linalg.norm(y,2)
-u = y
-
+#%% Parameters
 k = 8
 tol = 1e-10
 gamma = 0
 iters = 200
-for _ in range(iters):
-    y_,lam0,lam1 = Arnodi(A, k, u)
-    # gamma = -abs(lam1/lam0)**_
-    u = (1-gamma) * y_ + gamma * y
-    y = y_
-    err1 = abs(lam0 - max(true_eig))
-    err.append(err1)
-    if err1 < tol:
-        break
-    
-print('lam0:',max(true_eig)), print('lam_0:',lam0)
-plt.plot(np.log(err),'o-')
-plt.xlabel('# of restarted Arnoldi iterations')
-plt.ylabel('log error')
-# plt.xticks(np.linspace(0,iters-1,iters//6).astype('int'))
-plt.title('$A_1$')
-# plt.title('random matrix')
+extrapolate = True
+#%% 
+A_ext = Arnoldi(A, k, tol)
+Arn = Arnoldi(A, k, tol)
+A_ext.restarted_arnoldi(y, extrapolate, iters)#, true_eigenval=max(true_eig))
+Arn.restarted_arnoldi(y, not extrapolate, iters)#, true_eigenval=max(true_eig))
+#%%
+label_ext = '8-step $γ = γ_s$'
+label = '8-step'
+title = 'A3'
+plot_results(A_ext, label_ext, Arn, label, title)
