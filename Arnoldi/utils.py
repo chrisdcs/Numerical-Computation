@@ -94,7 +94,7 @@ class Arnoldi:
                           A = None, k = None, true_eigenval = None):
         """
         
-
+        
         Parameters
         ----------
         y : vector
@@ -109,7 +109,7 @@ class Arnoldi:
             k step Aronoldi iteration. The default is None.
         true_eigenval : double, optional
             True eigenvalue that we are solving. The default is None.
-
+        
         Returns
         -------
         None.
