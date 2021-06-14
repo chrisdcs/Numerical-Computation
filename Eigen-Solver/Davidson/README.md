@@ -30,7 +30,7 @@ Testing
 
 Notice
 ----------------
-1. File `setting.txt` list parameters for solving eigenvalue/vector pairs for different of sparse matrices that I have tested on.
+1. File `setting.txt` list parameters for solving eigenvalue/vector pairs for different sparse matrices that I have tested on.
 2. This is a research project in mathematics, any advice or suggestions from computer science literature are welcome to make this program better. There are sill lots of work left to be done, if you find any errors, feel free to let us know. 
 
 
