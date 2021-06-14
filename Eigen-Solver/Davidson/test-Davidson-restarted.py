@@ -2,7 +2,7 @@
 """
 Created on Tue May 18 12:08:10 2021
 
-@author: m1390
+@author: Chris Ding
 """
 
 import numpy as np
@@ -16,6 +16,7 @@ tol = 1e-10			# Convergence tolerance
 sparsity = 0.01
 
 a = []
+
 # algebraic multiplicity
 mult = 1
 
