@@ -1,11 +1,6 @@
 Extrapolating Davidson Method
 ==============================
 
-#[![TravisCI](https://travis-ci.org/uber/Python-Sample-Application.svg?branch=master)](https://travis-ci.org/uber/Python-Sample-Application)
-#[![Coverage Status](https://coveralls.io/repos/uber/Python-Sample-Application/badge.png)](https://coveralls.io/r/uber/Python-Sample-Application)
-
-#https://developer.uber.com/
-
 About
 -------------
 
