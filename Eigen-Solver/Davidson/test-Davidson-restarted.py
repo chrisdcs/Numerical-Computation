@@ -27,7 +27,12 @@ for i in range(1,m+1):
 A = np.diag(a) + sparsity*np.random.randn(n,n)
 A = (A.T + A)/2
 
-# uncomment the following and comment the previous matrix A to work with sparse matrices
+""" 
+
+uncomment the following and 
+comment the previous matrix A to work with sparse matrices
+
+"""
 # A = load_sparse_matrix('data/TEM27623.mat')
 # n=A.shape[0]
 

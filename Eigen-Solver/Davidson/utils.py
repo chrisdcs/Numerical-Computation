@@ -53,7 +53,7 @@ class Davidson:
         # restart or not
         self.restart = restart
         
-        # solving the largest/smallest eigenvalues, default: smallest
+        # solving the largest/smallest eigenvalues, default: smallest/descent=False
         self.descent = descent
     
     def iterate(self,V=None):
