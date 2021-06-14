@@ -21,8 +21,8 @@ As = []
 
 eig = 1                 # number of eigen values to compute
 l = 2                   # number of initial guess vectors
-k = 3
-steps = k+1             # number of steps
+k = 4
+steps = k             # number of steps
 n_iters = 500
 tol = 1e-10			# Convergence tolerance
 

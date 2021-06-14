@@ -26,7 +26,7 @@ def plot_results(err_ext,label_ext,err,label,title):
 
 class Davidson:
     
-    def __init__(self, A, n_eig, n_guess, k, n_iters, tol, restart=True):
+    def __init__(self, A, n_eig, n_guess, k, n_iters, tol, restart=True, descent=False):
         
         if n_guess < n_eig: raise Exception('# guess vectors ⩾ # eigen values')
         
@@ -52,6 +52,9 @@ class Davidson:
         
         # restart or not
         self.restart = restart
+        
+        # solving the largest/smallest eigenvalues, default: smallest
+        self.descent = descent
     
     def iterate(self,V=None):
         
@@ -75,7 +78,10 @@ class Davidson:
             
             # compute ritz vectors and values
             u,v = np.linalg.eig(H)
-            idx = np.argsort(u)[::-1]
+            if self.descent:
+                idx = np.argsort(u)[::-1]
+            else:
+                idx = np.argsort(u)
             u = u[idx]
             v = v[:,idx]
             

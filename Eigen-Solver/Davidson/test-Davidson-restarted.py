@@ -16,7 +16,10 @@ tol = 1e-10			# Convergence tolerance
 sparsity = 0.01
 
 a = []
-mult = 5
+# algebraic multiplicity
+mult = 1
+
+# number of distinct eigenvalues
 m = 1000
 n = m * mult            # Dimension of matrix
 for i in range(1,m+1):
@@ -37,7 +40,8 @@ l = 6                   # number of initial guess vectors: could be larger than 
 k = 8                   # k-step Davidson
 steps = k               # number of steps
 n_iters = 100
-D = Davidson(A, eig, l, steps, n_iters, tol)
+descent_order = False   # if descent order, we are solving max eigenvalues, vice versa
+D = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
 
 V = np.zeros((n,steps*l))
 
