@@ -46,4 +46,5 @@ If you want to work on this application we’d love your pull requests on GitHub
 Contact
 ----------------
 Name: Chi (Chris) Ding
+
 Email: ding.chi@ufl.edu
