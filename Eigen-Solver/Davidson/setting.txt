@@ -1,0 +1,27 @@
+file_name = 'usps_norm_5NN.mat'
+n_eig = 5
+gamma = -0.5
+n_guess = 12
+k = 4
+initial = 'random'
+
+file_name = 'har_10NN.mat'
+n_eig = 5
+gamma = -0.5
+n_guess = 12
+k = 4
+initial = 'random'
+
+file_name = 'TEM27623.mat'
+n_eig = 5
+gamma = -0.5
+n_guess = 24
+k = 9
+initial = 'random'
+
+file_name = 'ss1.mat'
+n_eig = 5
+gamma = -0.5
+n_guess = 6
+k = 9
+initial = 'random'
