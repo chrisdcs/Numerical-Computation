@@ -2,7 +2,7 @@
 """
 Created on Tue May 18 10:07:00 2021
 
-@author: m1390
+@author: Chris Ding
 """
 
 import numpy as np
@@ -24,10 +24,10 @@ I = np.eye(n)
 # k step Lanczos iteration
 l = 5                  # number of initial guess vectors
 eig = 5                # number of eigen values to compute
-steps = 100 # number of steps
+steps = 100            # number of steps: k
 
 # number of initial guess must be larger or equal to number of eigen values
-if l < eig: raise Exception('l must be >= k')
+if l < eig: raise Exception('l must be >= eig')
 
 start_davidson = time.time()
 
@@ -35,7 +35,8 @@ start_davidson = time.time()
 V = np.zeros((n,steps*l))
 # initialize guess vectors
 """
-    Initialization matters, if we use random vectors, converges very slowly
+    Initialization matters, if we use random vectors, converges slower, but doesn't
+    always work.
 """
 # for i in range(l):
 #     v0 = np.random.rand(n)
