@@ -10,10 +10,6 @@ import numpy as np
 from scipy.sparse import csr_matrix
 import matplotlib.pyplot as plt
 
-def generate_matrix(n,multiplicity,):
-    pass
-
-
 def plot_results(err_ext,label_ext,err,label,title):
     
     fig,ax = plt.subplots()
@@ -23,6 +19,7 @@ def plot_results(err_ext,label_ext,err,label,title):
     ax.set_title(title)
     ax.set_xlabel('# of iterations')
     ax.set_ylabel('log residual error')
+    plt.show()
 
 class Davidson:
     
@@ -62,14 +59,12 @@ class Davidson:
             # if no initialization then Euclid standard basis
             V = np.zeros((self.m,self.k*self.n_guess))
             V[:,:self.n_guess] = np.eye(self.m,self.n_guess)
-        
-        u_old = -1
 
         for i in range(1,self.k):
             if (i+1) % 10 == 0:
                 print("    Iteration", i+1)
             
-            # orthogonalize [V,vt]
+            # orthogonalize [V,t]
             Q,_ = np.linalg.qr(V[:,:i*self.n_guess])
             V[:,:i*self.n_guess] = Q
             
@@ -82,14 +77,9 @@ class Davidson:
                 idx = np.argsort(u)[::-1]
             else:
                 idx = np.argsort(u)
+            
             u = u[idx]
             v = v[:,idx]
-            
-            # stop criterion
-            if np.linalg.norm(u[:self.n_eig]-u_old) < self.tol:
-                self.done = True
-                break
-            u_old = u[:self.n_eig]
             
             restart_vectors = []
             error = []
@@ -97,9 +87,15 @@ class Davidson:
             # compute residual and approximate next step
             for j in range(self.n_guess):
                 restart_vectors.append(V[:,:i*self.n_guess] @ v[:,j])
-                w = self.A @ restart_vectors[-1]- u[j] * restart_vectors[-1]
-                error.append(w)
-                q = w/(u[j]-self.A[j,j])
+                
+                # compute residuals
+                residual = self.A @ restart_vectors[-1]- u[j] * restart_vectors[-1]
+                error.append(residual)
+                
+                # preconditioning
+                q = residual/(u[j]-self.A[j,j])
+                
+                # expand subspace
                 V[:,(i*self.n_guess + j)] = q
         
         return np.array(restart_vectors).T, u, np.array(error)
@@ -118,8 +114,13 @@ class Davidson:
             
             restart, eigenvals, error = self.iterate(V)
             val = np.linalg.norm(error,2,axis=1)
+            
+            if (val[:self.n_eig] < self.tol).all():
+                self.done = True
+                
             errors.append(val)
-            print("Epoch",i,"error:",np.linalg.norm(val))
+            print("Epoch",i,"error:",np.linalg.norm(val[:self.n_eig]))
+            
             if self.done:
                 return restart, eigenvals, np.array(errors)
             

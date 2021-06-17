@@ -12,9 +12,9 @@ from utils import Davidson, plot_results, load_sparse_matrix
 import time
 
 
-tol = 1e-10			# Convergence tolerance
-sparsity = 0.01
+tol = 1e-6			# Convergence tolerance
 
+sparsity = 0.01
 a = []
 
 # algebraic multiplicity
@@ -34,19 +34,19 @@ uncomment the following and
 comment the previous matrix A to work with sparse matrices
 
 """
-# A = load_sparse_matrix('data/TEM27623.mat')
-# n=A.shape[0]
+# A = load_sparse_matrix('data/ss1.mat')
+# n = A.shape[0]
 
+A = sparse.load_npz('rhfHBAR.npz')
+n = A.shape[0]
 
-# I = np.eye(n)
-# k step Lanczos iteration
 
 eig = 5                 # number of eigen values to compute
-l = 6                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 8                   # k-step Davidson
+l = 12                  # number of initial guess vectors: could be larger than 1 for each eigenvalue
+k = 4                   # k-step Davidson
 steps = k               # number of steps
-n_iters = 100
-descent_order = False   # if descent order, we are solving max eigenvalues, vice versa
+n_iters = 500
+descent_order = False   # if descent order True, we are solving max eigenvalues, vice versa
 D = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
 
 V = np.zeros((n,steps*l))
@@ -56,7 +56,8 @@ for i in range(l*steps):
     v0 = np.random.rand(n)
     V[:,i] = v0/np.linalg.norm(v0)
 
-# V = np.eye(n,l*steps)
+# Standard Euclidean basis
+V = np.eye(n,l*steps)
 
 # number of initial guess must be larger or equal to number of eigen values we are trying to solve
 if l < eig: raise Exception('l must be >= number of eigenvalues')
@@ -72,8 +73,6 @@ end_davidson = time.time()
 
 
 restart_,eigenvals_,errors_ = D.restarted_Davidson(V.copy())
-
-
 
 print("davidson = ", eigenvals[:eig],";",
     end_davidson - start_davidson, "seconds")
@@ -103,7 +102,7 @@ for i in range(eig):
     err = np.array(errors_[:,i])
     label = str(steps)+'-step'
     
-    common = max(err_ext.min(), err.min())
+    common = 0#max(err_ext.min(), err.min())
     err_ext = err_ext[err_ext >= common]
     err = err[err >= common]
     

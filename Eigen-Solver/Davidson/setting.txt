@@ -18,7 +18,7 @@ file_name = 'TEM27623.mat'
 n_eig = 5
 gamma = -0.5
 n_guess (l) = 24
-k = 9
+k = 8
 descent = True
 initial = 'random'
 
@@ -29,3 +29,11 @@ n_guess (l) = 6
 k = 9
 descent = False
 initial = 'random'
+
+file_name = 'rhfHBAR.npz'
+n_eig = 5
+gamma = -0.5
+n_guess (l) = 12
+k = 4 or 8
+descent = False
+initial = 'Euclidean'
