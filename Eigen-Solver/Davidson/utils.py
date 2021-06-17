@@ -122,6 +122,7 @@ class Davidson:
             print("Epoch",i,"error:",np.linalg.norm(val[:self.n_eig]))
             
             if self.done:
+                print("Done!")
                 return restart, eigenvals, np.array(errors)
             
             if extrapolate:
@@ -135,7 +136,6 @@ class Davidson:
             else:
                 V = np.zeros((self.m,self.k * self.n_guess))
                 V[:,:self.n_guess] = restart
-        print("Done!")
             
         return restart, eigenvals, np.array(errors)
     
