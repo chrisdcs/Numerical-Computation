@@ -41,11 +41,11 @@ A = sparse.load_npz('rhfHBAR.npz')
 n = A.shape[0]
 
 
-eig = 5                 # number of eigen values to compute
-l = 12                  # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 4                   # k-step Davidson
-steps = k               # number of steps
-n_iters = 500
+eig = 10                 # number of eigen values to compute
+l = 12                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
+k = 4                    # k-step Davidson
+steps = k                # number of steps
+n_iters = 200
 descent_order = False   # if descent order True, we are solving max eigenvalues, vice versa
 D = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
 
