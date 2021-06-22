@@ -24,7 +24,7 @@ descent_order = False       # if descent order True, we are solving max eigenval
 init = 'Euclidean'          # type of guess vector initialization
 
 #%% initialization and sanity check
-# number of initial guess must be larger or equal to number of eigen values we are trying to solve
+# number of initial guess must be larger or equal to number of eigenvalues
 if n_guess < n_eig: raise Exception(
         'number of guess vectors must be >= number of eigenvalues')
 
