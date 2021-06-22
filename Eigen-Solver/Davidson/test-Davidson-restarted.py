@@ -12,57 +12,39 @@ from utils import Davidson, plot_results, load_sparse_matrix
 import time
 import argparse
 #%% set parameters
-tol = 1e-8			# Convergence tolerance
-sparsity = 0.01
-a = []
 
-# algebraic multiplicity
-mult = 1
+tol = 1e-8			        # Convergence tolerance
+data_file_name = r'data/rhfHBAR.npz'
+n_eig = 10                  # number of eigen values to compute
+n_guess = 15                # number of initial guess vectors: could be larger than 1 for each eigenvalue
+k = 8                       # k-step Davidson
+steps = k                   # number of steps
+max_iter = 200              # max number of times to run restarted Davidson
+descent_order = False       # if descent order True, we are solving max eigenvalues, vice versa
+init = 'Euclidean'          # type of guess vector initialization
 
-# number of distinct eigenvalues
-m = 1000
-n = m * mult            # Dimension of matrix
-for i in range(1,m+1):
-    a += mult * [i]
-A = np.diag(a) + sparsity*np.random.randn(n,n)
-A = (A.T + A)/2
+#%% initialization and sanity check
+# number of initial guess must be larger or equal to number of eigen values we are trying to solve
+if n_guess < n_eig: raise Exception(
+        'number of guess vectors must be >= number of eigenvalues')
 
-""" 
-
-uncomment the following and 
-comment the previous matrix A to work with sparse matrices
-
-"""
-# A = load_sparse_matrix('data/ss1.mat')
-# n = A.shape[0]
-
-A = sparse.load_npz('data/rhfHBAR.npz')
+A = load_sparse_matrix(data_file_name)
 n = A.shape[0]
 
-eig = 5                 # number of eigen values to compute
-l = 12                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 4                    # k-step Davidson
-steps = k                # number of steps
-n_iters = 200
-descent_order = False   # if descent order True, we are solving max eigenvalues, vice versa
-#%% Initialize algorithm
-
-D = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
-D_ = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
-
-V = np.zeros((n,steps*l))
-
 # initialize guess vectors and collect them as V
-# for i in range(l):
-#     v0 = np.random.rand(n)
-#     V[:,i] = v0/np.linalg.norm(v0)
+V = np.zeros((n,steps*n_guess))
+if init == 'random':
+    for i in range(n_guess):
+        v0 = np.random.rand(n)
+        V[:,i] = v0/np.linalg.norm(v0)
+elif init == 'Euclidean':
+    # Standard Euclidean basis
+    V[:,:n_guess] = np.eye(n,n_guess)
+    
+#%% Initialize algorithm and computation
 
-
-# Standard Euclidean basis
-V[:,:l] = np.eye(n,l)
-
-# number of initial guess must be larger or equal to number of eigen values we are trying to solve
-if l < eig: raise Exception('l must be >= number of eigenvalues')
+D = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
+D_ = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
 
 start_davidson = time.time()
 
@@ -76,7 +58,7 @@ end_davidson = time.time()
 
 restart_,eigenvals_,errors_ = D_.restarted_Davidson(V.copy())
 
-print("davidson = ", eigenvals[:eig],";",
+print("davidson = ", eigenvals[:n_eig],";",
     end_davidson - start_davidson, "seconds")
 #%% Compare with package solvers
 # End of Numpy/scipy diagonalization. Print results.
@@ -85,17 +67,17 @@ if sparse.issparse(A):
     E,Vec = LA.eigs(A)#,k=1,which='SM')
     E = np.sort(E)
     end_numpy = time.time()
-    print("scipy = ", E[:eig],";",
+    print("scipy = ", E[:n_eig],";",
       end_numpy - start_numpy, "seconds")
 else:
     E,Vec = np.linalg.eig(A)
     E = np.sort(E)
     end_numpy = time.time()
-    print("numpy = ", E[:eig],";",
+    print("numpy = ", E[:n_eig],";",
       end_numpy - start_numpy, "seconds")
 
 #%%
-for i in range(eig):
+for i in range(n_eig):
     err_ext = np.array(errors[:,i])
     label_ext = str(steps)+'-step $γ = -0.5$'
     # title = 'eigenvalue' + str(i+1)

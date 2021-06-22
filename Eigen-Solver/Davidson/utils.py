@@ -7,6 +7,7 @@ Created on Wed May 19 10:17:01 2021
 
 import h5py
 import numpy as np
+import scipy.sparse as sparse
 from scipy.sparse import csr_matrix
 import matplotlib.pyplot as plt
 
@@ -165,27 +166,38 @@ class Davidson:
     
 def load_sparse_matrix(filename):
     
-    # load sparse matrix from .mat file in read mode
-    f = h5py.File(filename, 'r')
-    A = f['Problem']['A']
+    _,ext = filename.split('.')
     
-    ir = np.array(A['ir'])
-    jc = np.array(A['jc'])
+    if ext == 'mat':
     
-    data = np.array(A['data'])
-    row_idx = np.array(ir)
-    col_idx = []
+        # load sparse matrix from .mat file in read mode
+        f = h5py.File(filename, 'r')
+        A = f['Problem']['A']
+        
+        ir = np.array(A['ir'])
+        jc = np.array(A['jc'])
+        
+        data = np.array(A['data'])
+        row_idx = np.array(ir)
+        col_idx = []
+        
+        count = 0
+        for idx in range(data.shape[0]):
+            if jc[count] == idx:
+                col_idx.append(count)
+                count += 1
+            else:
+                col_idx.append(col_idx[-1])
+        
+        col_idx = np.array(col_idx).astype(np.uint64)
+        
+        mat = csr_matrix((data,(row_idx,col_idx)))
     
-    count = 0
-    for idx in range(data.shape[0]):
-        if jc[count] == idx:
-            col_idx.append(count)
-            count += 1
-        else:
-            col_idx.append(col_idx[-1])
-    
-    col_idx = np.array(col_idx).astype(np.uint64)
-    
-    mat = csr_matrix((data,(row_idx,col_idx)))
+    elif ext == 'npz':
+        mat = sparse.load_npz(filename)
+    elif ext == 'npy':
+        mat = np.load(filename)
+    else:
+        raise Exception("File type not supported!");
     
     return mat
