@@ -37,12 +37,12 @@ comment the previous matrix A to work with sparse matrices
 # A = load_sparse_matrix('data/ss1.mat')
 # n = A.shape[0]
 
-A = sparse.load_npz('rhfHBAR.npz')
+A = sparse.load_npz('data/rhfHBAR.npz')
 n = A.shape[0]
 
 
-eig = 10                 # number of eigen values to compute
-l = 12                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
+eig = 5                 # number of eigen values to compute
+l = 10                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
 k = 4                    # k-step Davidson
 steps = k                # number of steps
 n_iters = 200
@@ -52,12 +52,13 @@ D = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
 V = np.zeros((n,steps*l))
 
 # initialize guess vectors and collect them as V
-for i in range(l*steps):
-    v0 = np.random.rand(n)
-    V[:,i] = v0/np.linalg.norm(v0)
+# for i in range(l):
+#     v0 = np.random.rand(n)
+#     V[:,i] = v0/np.linalg.norm(v0)
+
 
 # Standard Euclidean basis
-V = np.eye(n,l*steps)
+V[:,:l] = np.eye(n,l)
 
 # number of initial guess must be larger or equal to number of eigen values we are trying to solve
 if l < eig: raise Exception('l must be >= number of eigenvalues')

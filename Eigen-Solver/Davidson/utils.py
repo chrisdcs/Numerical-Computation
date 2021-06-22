@@ -62,7 +62,7 @@ class Davidson:
 
         for i in range(1,self.k):
             if (i+1) % 10 == 0:
-                print("    Iteration", i+1)
+                print("    Step", i+1)
             
             # orthogonalize [V,t]
             Q,_ = np.linalg.qr(V[:,:i*self.n_guess])
@@ -71,7 +71,7 @@ class Davidson:
             # compute krylov matrix
             H = V[:,:i*self.n_guess].T @ self.A @ V[:,:i*self.n_guess]
             
-            # compute ritz vectors and values
+            # compute eigen vectors and values for H
             u,v = np.linalg.eig(H)
             if self.descent:
                 idx = np.argsort(u)[::-1]
@@ -81,16 +81,19 @@ class Davidson:
             u = u[idx]
             v = v[:,idx]
             
-            restart_vectors = []
-            error = []
+            restart_vectors = np.zeros((self.m,self.n_guess))
+            error = np.zeros((self.m,self.n_guess))
             
             # compute residual and approximate next step
             for j in range(self.n_guess):
-                restart_vectors.append(V[:,:i*self.n_guess] @ v[:,j])
+                
+                # compute ritz vectors
+                ritz_vector = V[:,:i*self.n_guess] @ v[:,j]
+                restart_vectors[:,j] = ritz_vector
                 
                 # compute residuals
-                residual = self.A @ restart_vectors[-1]- u[j] * restart_vectors[-1]
-                error.append(residual)
+                residual = self.A @ restart_vectors[:,j]- u[j] * restart_vectors[:,j]
+                error[:,j] = residual
                 
                 # preconditioning
                 q = residual/(u[j]-self.A[j,j])
@@ -98,7 +101,7 @@ class Davidson:
                 # expand subspace
                 V[:,(i*self.n_guess + j)] = q
         
-        return np.array(restart_vectors).T, u, np.array(error)
+        return restart_vectors, u, error.T
         
     def restarted_Davidson(self,V=None, extrapolate=False):
         
