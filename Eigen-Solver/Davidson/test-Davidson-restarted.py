@@ -10,10 +10,9 @@ import scipy.sparse.linalg as LA
 import scipy.sparse as sparse
 from utils import Davidson, plot_results, load_sparse_matrix
 import time
-
-
-tol = 1e-6			# Convergence tolerance
-
+import argparse
+#%% set parameters
+tol = 1e-8			# Convergence tolerance
 sparsity = 0.01
 a = []
 
@@ -40,25 +39,27 @@ comment the previous matrix A to work with sparse matrices
 A = sparse.load_npz('data/rhfHBAR.npz')
 n = A.shape[0]
 
-
 eig = 5                 # number of eigen values to compute
-l = 15                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
+l = 12                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
 k = 4                    # k-step Davidson
 steps = k                # number of steps
 n_iters = 200
 descent_order = False   # if descent order True, we are solving max eigenvalues, vice versa
+#%% Initialize algorithm
+
 D = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
+D_ = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
 
 V = np.zeros((n,steps*l))
 
 # initialize guess vectors and collect them as V
-# for i in range(l):
-#     v0 = np.random.rand(n)
-#     V[:,i] = v0/np.linalg.norm(v0)
+for i in range(l):
+    v0 = np.random.rand(n)
+    V[:,i] = v0/np.linalg.norm(v0)
 
 
 # Standard Euclidean basis
-V[:,:l] = np.eye(n,l)
+# V[:,:l] = np.eye(n,l)
 
 # number of initial guess must be larger or equal to number of eigen values we are trying to solve
 if l < eig: raise Exception('l must be >= number of eigenvalues')
@@ -73,7 +74,7 @@ restart, eigenvals, errors = D.restarted_Davidson(V.copy(),True)
 end_davidson = time.time()
 
 
-restart_,eigenvals_,errors_ = D.restarted_Davidson(V.copy())
+restart_,eigenvals_,errors_ = D_.restarted_Davidson(V.copy())
 
 print("davidson = ", eigenvals[:eig],";",
     end_davidson - start_davidson, "seconds")

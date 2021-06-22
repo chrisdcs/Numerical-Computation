@@ -29,7 +29,8 @@ class Davidson:
         
         # matrix to solve for eigenvalues and eigenvectors
         self.A = A
-        
+        self.eigVec = {i: None for i in range(n_guess)}
+        self.residuals = {i: None for i in range(n_guess)}
         
         self.n_eig = n_eig
         self.n_guess = n_guess
@@ -52,6 +53,7 @@ class Davidson:
         
         # solving the largest/smallest eigenvalues, default: smallest/descent=False
         self.descent = descent
+        
     
     def iterate(self,V=None):
         
@@ -60,16 +62,21 @@ class Davidson:
             V = np.zeros((self.m,self.k*self.n_guess))
             V[:,:self.n_guess] = np.eye(self.m,self.n_guess)
 
+        # keep track of subspace size
+        size = self.n_guess
+        
         for i in range(1,self.k):
+            # iterate k-step Davidson
+            
             if (i+1) % 10 == 0:
                 print("    Step", i+1)
             
             # orthogonalize [V,t]
-            Q,_ = np.linalg.qr(V[:,:i*self.n_guess])
-            V[:,:i*self.n_guess] = Q
+            Q,_ = np.linalg.qr(V[:,:size])
+            V[:,:size] = Q
             
             # compute krylov matrix
-            H = V[:,:i*self.n_guess].T @ self.A @ V[:,:i*self.n_guess]
+            H = V[:,:size].T @ self.A @ V[:,:size]
             
             # compute eigen vectors and values for H
             u,v = np.linalg.eig(H)
@@ -82,26 +89,39 @@ class Davidson:
             v = v[:,idx]
             
             restart_vectors = np.zeros((self.m,self.n_guess))
-            error = np.zeros((self.m,self.n_guess))
+            residuals = np.zeros((self.m,self.n_guess))
             
+            # increament subspace V, but not use them until it is orthogonalized
+            curr_size = size
             # compute residual and approximate next step
             for j in range(self.n_guess):
                 
+                if self.eigVec[j] is not None:
+                    restart_vectors[:,j] = self.eigVec[j]
+                    residuals[:,j] = self.residuals[j]
+                    continue
+                
                 # compute ritz vectors
-                ritz_vector = V[:,:i*self.n_guess] @ v[:,j]
+                ritz_vector = V[:,:curr_size] @ v[:,j]
                 restart_vectors[:,j] = ritz_vector
                 
                 # compute residuals
                 residual = self.A @ restart_vectors[:,j]- u[j] * restart_vectors[:,j]
-                error[:,j] = residual
+                if np.linalg.norm(residual) < self.tol:
+                    self.eigVec[j] = ritz_vector
+                    self.residuals[j] = residual
+                
+                residuals[:,j] = residual
                 
                 # preconditioning
                 q = residual/(u[j]-self.A[j,j])
                 
                 # expand subspace
-                V[:,(i*self.n_guess + j)] = q
+                V[:,size] = q
+                # increament subspace size
+                size += 1
         
-        return restart_vectors, u, error.T
+        return restart_vectors, u, residuals.T
         
     def restarted_Davidson(self,V=None, extrapolate=False):
         
