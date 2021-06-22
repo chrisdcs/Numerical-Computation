@@ -42,7 +42,7 @@ n = A.shape[0]
 
 
 eig = 5                 # number of eigen values to compute
-l = 10                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
+l = 15                   # number of initial guess vectors: could be larger than 1 for each eigenvalue
 k = 4                    # k-step Davidson
 steps = k                # number of steps
 n_iters = 200
