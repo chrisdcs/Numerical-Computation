@@ -53,13 +53,13 @@ D_ = Davidson(A, eig, l, steps, n_iters, tol, descent = descent_order)
 V = np.zeros((n,steps*l))
 
 # initialize guess vectors and collect them as V
-for i in range(l):
-    v0 = np.random.rand(n)
-    V[:,i] = v0/np.linalg.norm(v0)
+# for i in range(l):
+#     v0 = np.random.rand(n)
+#     V[:,i] = v0/np.linalg.norm(v0)
 
 
 # Standard Euclidean basis
-# V[:,:l] = np.eye(n,l)
+V[:,:l] = np.eye(n,l)
 
 # number of initial guess must be larger or equal to number of eigen values we are trying to solve
 if l < eig: raise Exception('l must be >= number of eigenvalues')
