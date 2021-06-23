@@ -94,7 +94,7 @@ class Davidson:
             
             # increament subspace V, but not use them until it is orthogonalized
             curr_size = size
-            # compute residual and approximate next step
+            # compute residual and check convergence 
             for j in range(self.n_guess):
                 
                 if self.eigVec[j] is not None:
