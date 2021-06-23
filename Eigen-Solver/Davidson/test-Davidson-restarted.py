@@ -41,6 +41,9 @@ elif init == 'Euclidean':
     # Standard Euclidean basis
     V[:,:n_guess] = np.eye(n,n_guess)
     
+eigvec = np.load('eigvec.npy')
+V[:,:5] = eigvec[:,:5]
+
 #%% Initialize algorithm and computation
 
 D = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
@@ -92,5 +95,6 @@ for i in range(n_eig):
     
     plot_results(err_ext, label_ext, err, label, title)
 
-
+np.save('eigvec.npy',restart)
+np.save('eigval.npy',eigenvals)
 
