@@ -6,6 +6,7 @@ Created on Tue Jun 15 11:51:54 2021
 """
 
 from functools import partial
+from scipy.sparse import csr_matrix
 
 n = 10100
 
@@ -27,3 +28,5 @@ with open(r'F:/Download/rhfHBAR.txt', 'r+b') as f:
             count += 1
         else:
             break
+        
+mat = csr_matrix((data,(row_idx, col_idx)))
