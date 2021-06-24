@@ -13,18 +13,45 @@ import time
 import argparse
 #%% set parameters
 parser = argparse.ArgumentParser()
-# we are in the argparse branch
 
-tol = 1e-8			        # Convergence tolerance
-data_file_name = r'data/TEM27623.mat'
-n_eig = 5                  # number of eigen values to compute
-n_guess = 6                # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 4                       # k-step Davidson
-steps = k                   # number of steps
-max_iter = 200              # max number of times to run restarted Davidson
-descent_order = True       # if descent order True, we are solving max eigenvalues, vice versa
-init = 'random'          # type of guess vector initialization
+parser.add_argument("tol", help="tolerance for convergence", type=float)
+parser.add_argument("data_file_name", help="file directory + file name, e.g. data/TEM27623", type=str)
+parser.add_argument("n_eig", help="number of eigenvalues to solve", type=int)
+parser.add_argument("n_guess", help="number of initial guess vectors", type=int)
+parser.add_argument("k", help="k-step Davidson", type=int)
+parser.add_argument("max_iter", help="number of max iteration", type=int)
+parser.add_argument("descent_order", help="solve max/min eigenvalues", type=str)
+parser.add_argument("init", help="initial guess vector type: 1. random 2. Euclidean", type=str)
+parser.add_argument("gamma", help="extrapolation parameter  [-1,0)", type=float)
 
+args = parser.parse_args()
+
+print()
+print("tolerance:", args.tol,)
+print("data file name:", args.data_file_name)
+print("number of eigenvalues to solve:", args.n_eig)
+print("number of initial guess vectors (block size):", args.n_guess)
+print("{}-step Davidson".format(args.k))
+print("max number of iterations:", args.max_iter)
+if args.descent_order=="True":
+    print("solve max eigenvalues")
+elif args.descent_order == "False":
+    print("solve min eigenvalues")
+else:
+    raise Exception("Invalid Bool Input")
+print("initial guess vectors:", args.init)
+print("extrapolation parameter gamma:", args.gamma)
+
+tol = float(args.tol)                   # Convergence tolerance
+data_file_name = args.data_file_name    #'data/TEM27623.mat'
+n_eig = args.n_eig                      # number of eigen values to compute
+n_guess = args.n_guess                  # number of initial guess vectors: could be larger than 1 for each eigenvalue
+k = args.k                              # k-step Davidson
+steps = k                               # number of steps
+max_iter = args.max_iter                # max number of times to run restarted Davidson
+descent_order = True if args.descent_order == "True" else False       # if descent True, we are solving max eigenvalues, vice versa
+init = args.init                        # type of guess vector initialization
+gamma = args.gamma
 #%% initialization and sanity check
 # number of initial guess must be larger or equal to number of eigenvalues
 if n_guess < n_eig: raise Exception(
@@ -47,9 +74,10 @@ elif init == 'Euclidean':
 # V[:,:5] = eigvec[:,:5]
 #%% Initialize algorithm and computation
 
-D = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
+D = Davidson(A, n_eig, n_guess, steps, max_iter, tol, gamma, descent = descent_order)
 D_ = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
 
+print("\nStart Extrapolated Version!")
 start_davidson = time.time()
 
 
@@ -59,7 +87,7 @@ start_davidson = time.time()
 restart, eigenvals, errors = D.restarted_Davidson(V.copy(),True)
 end_davidson = time.time()
 
-
+print("\n\nStart Original Version!")
 restart_,eigenvals_,errors_ = D_.restarted_Davidson(V.copy())
 
 print("davidson = ", eigenvals[:n_eig],";",
