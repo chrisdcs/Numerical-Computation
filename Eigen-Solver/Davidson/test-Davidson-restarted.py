@@ -15,9 +15,9 @@ import argparse
 
 tol = 1e-8			        # Convergence tolerance
 data_file_name = r'data/rhfHBAR.npz'
-n_eig = 10                  # number of eigen values to compute
-n_guess = 20                # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 6                       # k-step Davidson
+n_eig = 5                  # number of eigen values to compute
+n_guess = 10                # number of initial guess vectors: could be larger than 1 for each eigenvalue
+k = 4                       # k-step Davidson
 steps = k                   # number of steps
 max_iter = 300              # max number of times to run restarted Davidson
 descent_order = False       # if descent order True, we are solving max eigenvalues, vice versa
