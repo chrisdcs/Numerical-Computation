@@ -12,16 +12,18 @@ from utils import Davidson, plot_results, load_sparse_matrix
 import time
 import argparse
 #%% set parameters
+parser = argparse.ArgumentParser()
+# we are in the argparse branch
 
 tol = 1e-8			        # Convergence tolerance
-data_file_name = r'data/rhfHBAR.npz'
-n_eig = 10                  # number of eigen values to compute
-n_guess = 20                # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 6                       # k-step Davidson
+data_file_name = r'data/TEM27623.mat'
+n_eig = 5                  # number of eigen values to compute
+n_guess = 6                # number of initial guess vectors: could be larger than 1 for each eigenvalue
+k = 4                       # k-step Davidson
 steps = k                   # number of steps
-max_iter = 300              # max number of times to run restarted Davidson
-descent_order = False       # if descent order True, we are solving max eigenvalues, vice versa
-init = 'Euclidean'          # type of guess vector initialization
+max_iter = 200              # max number of times to run restarted Davidson
+descent_order = True       # if descent order True, we are solving max eigenvalues, vice versa
+init = 'random'          # type of guess vector initialization
 
 #%% initialization and sanity check
 # number of initial guess must be larger or equal to number of eigenvalues
@@ -43,7 +45,6 @@ elif init == 'Euclidean':
     
 # eigvec = np.load('eigvec.npy')
 # V[:,:5] = eigvec[:,:5]
-
 #%% Initialize algorithm and computation
 
 D = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
@@ -95,6 +96,6 @@ for i in range(n_eig):
     
     plot_results(err_ext, label_ext, err, label, title)
 
-np.save('eigvec.npy',restart)
-np.save('eigval.npy',eigenvals)
+# np.save('eigvec.npy',restart)
+# np.save('eigval.npy',eigenvals)
 
