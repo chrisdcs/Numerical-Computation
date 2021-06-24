@@ -41,8 +41,8 @@ elif init == 'Euclidean':
     # Standard Euclidean basis
     V[:,:n_guess] = np.eye(n,n_guess)
     
-eigvec = np.load('eigvec.npy')
-V[:,:5] = eigvec[:,:5]
+# eigvec = np.load('eigvec.npy')
+# V[:,:5] = eigvec[:,:5]
 
 #%% Initialize algorithm and computation
 
