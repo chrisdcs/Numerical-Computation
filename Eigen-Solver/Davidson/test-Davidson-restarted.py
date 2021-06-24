@@ -42,7 +42,7 @@ else:
 print("initial guess vectors:", args.init)
 print("extrapolation parameter gamma:", args.gamma)
 
-tol = float(args.tol)                   # Convergence tolerance
+tol = args.tol                          # Convergence tolerance
 data_file_name = args.data_file_name    #'data/TEM27623.mat'
 n_eig = args.n_eig                      # number of eigen values to compute
 n_guess = args.n_guess                  # number of initial guess vectors: could be larger than 1 for each eigenvalue
