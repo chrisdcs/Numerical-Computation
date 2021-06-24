@@ -24,7 +24,7 @@ def plot_results(err_ext,label_ext,err,label,title):
 
 class Davidson:
     
-    def __init__(self, A, n_eig, n_guess, k, n_iters, tol, restart=True, descent=False):
+    def __init__(self, A, n_eig, n_guess, k, n_iters, tol, gamma = None, restart=True, descent=False):
         
         if n_guess < n_eig: raise Exception('# guess vectors ⩾ # eigen values')
         
@@ -46,6 +46,8 @@ class Davidson:
         
         # k step Davidson iteration
         self.k = k
+        
+        self.gamma = gamma
         
         self.done = False
         
@@ -152,7 +154,7 @@ class Davidson:
             if extrapolate:
                 # gamma = -(eigenvals[:self.n_guess]/eigenvals[1:self.n_guess+1]) ** (i+1)
                 # gamma = np.array(self.n_guess * [-0.75])
-                gamma = np.array(self.n_guess * [-0.5])
+                gamma = np.array(self.n_guess * [self.gamma])
                 gamma.reshape(1,-1)
                 V = np.zeros((self.m,self.k * self.n_guess))
                 V[:,:self.n_guess] = (1-gamma) * restart + gamma * previous
