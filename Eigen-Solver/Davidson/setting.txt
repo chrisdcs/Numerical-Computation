@@ -17,8 +17,8 @@ initial = 'random'
 file_name = 'TEM27623.mat'
 n_eig = 5
 gamma = -0.5
-n_guess = 24
-k = 8
+n_guess = 6
+k = 4
 descent = True
 initial = 'random'
 
