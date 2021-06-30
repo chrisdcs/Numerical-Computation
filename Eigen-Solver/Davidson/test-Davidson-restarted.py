@@ -12,23 +12,11 @@ from utils import Davidson, plot_results, load_sparse_matrix
 import time
 import argparse
 #%% set parameters
-<<<<<<< HEAD
 
-tol = 1e-8			        # Convergence tolerance
-data_file_name = r'data/rhfHBAR.npz'
-n_eig = 5                  # number of eigen values to compute
-n_guess = 10                # number of initial guess vectors: could be larger than 1 for each eigenvalue
-k = 4                       # k-step Davidson
-steps = k                   # number of steps
-max_iter = 300              # max number of times to run restarted Davidson
-descent_order = False       # if descent order True, we are solving max eigenvalues, vice versa
-init = 'Euclidean'          # type of guess vector initialization
-
-=======
 parser = argparse.ArgumentParser(description="initialize parameters")
 
 parser.add_argument("--tol", type=float, default=1e-14, help="tolerance for convergence")
-parser.add_argument("--data_file_name", type=str, default='data/rhfHBAR.npz', 
+parser.add_argument("--data_file_name", type=str, default='data/HBAR_rhf.npz', 
                     help="file directory + file name, e.g. data/TEM27623")
 parser.add_argument("--n_eig", type=int, default=5, help="number of eigenvalues to solve")
 parser.add_argument("--n_guess", type=int, default=5, help="number of initial guess vectors")
@@ -66,7 +54,6 @@ max_iter = args.max_iter                # max number of times to run restarted D
 descent_order = True if args.descent_order == "True" else False       # if descent True, we are solving max eigenvalues, vice versa
 init = args.init                        # type of guess vector initialization
 gamma = args.gamma
->>>>>>> argparse
 #%% initialization and sanity check
 # number of initial guess must be larger or equal to number of eigenvalues
 if n_guess < n_eig: raise Exception(
@@ -138,7 +125,3 @@ for i in range(n_eig):
     err = err[err >= common]
     
     plot_results(err_ext, label_ext, err, label, title)
-
-# np.save('eigvec.npy',restart)
-# np.save('eigval.npy',eigenvals)
-
