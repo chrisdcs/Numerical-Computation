@@ -9,8 +9,9 @@ from functools import partial
 from scipy.sparse import csr_matrix
 
 n = 10100
+m = n**2
 
-with open(r'F:/Download/rhfHBAR.txt', 'r+b') as f:
+with open(r'F:/Download/HBAR_rhf.txt', 'r+b') as f:
     data = []
     row_idx = []
     col_idx = []
@@ -20,6 +21,8 @@ with open(r'F:/Download/rhfHBAR.txt', 'r+b') as f:
         txt = text.decode()
         # detect end of file
         if txt != '':
+            if count == m:
+                break
             num = float(text.decode())
             if abs(num) > 0:
                 data.append(num)
