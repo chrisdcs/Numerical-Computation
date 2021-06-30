@@ -14,16 +14,16 @@ import argparse
 #%% set parameters
 parser = argparse.ArgumentParser(description="initialize parameters")
 
-parser.add_argument("--tol", type=float, default=1e-8, help="tolerance for convergence")
+parser.add_argument("--tol", type=float, default=1e-14, help="tolerance for convergence")
 parser.add_argument("--data_file_name", type=str, default='data/rhfHBAR.npz', 
                     help="file directory + file name, e.g. data/TEM27623")
 parser.add_argument("--n_eig", type=int, default=5, help="number of eigenvalues to solve")
-parser.add_argument("--n_guess", type=int, default=10, help="number of initial guess vectors")
-parser.add_argument("--k", type=int, default=4, help="k-step Davidson")
-parser.add_argument("--max_iter", type=int, default=300, help="number of max iteration")
+parser.add_argument("--n_guess", type=int, default=5, help="number of initial guess vectors")
+parser.add_argument("--k", type=int, default=20, help="k-step Davidson")
+parser.add_argument("--max_iter", type=int, default=500, help="number of max iteration")
 parser.add_argument("--descent_order", type=str, default='False', help="solve max/min eigenvalues")
-parser.add_argument("--init", type=str, default='Euclidan', help="initial guess vector type: 1. random 2. Euclidean")
-parser.add_argument("--gamma", type=float, default = -0.5, help="extrapolation parameter  [-1,0)")
+parser.add_argument("--init", type=str, default='random', help="initial guess vector type: 1. random 2. Euclidean")
+parser.add_argument("--gamma", type=float, default = -0.1, help="extrapolation parameter  [-1,0)")
 
 args = parser.parse_args()
 
@@ -109,10 +109,10 @@ else:
     print("numpy = ", E[:n_eig],";",
       end_numpy - start_numpy, "seconds")
 
-#%%
+#%% plot results
 for i in range(n_eig):
     err_ext = np.array(errors[:,i])
-    label_ext = str(steps)+'-step $γ = -0.5$'
+    label_ext = str(steps)+'-step $γ = {}$'.format(args.gamma)
     # title = 'eigenvalue' + str(i+1)
     title = None
     
