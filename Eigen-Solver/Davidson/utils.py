@@ -78,7 +78,7 @@ class Davidson:
             Q,_ = np.linalg.qr(V[:,:size])
             V[:,:size] = Q
             
-            # compute krylov matrix
+            # compute krylov/subspace matrix
             H = V[:,:size].T @ self.A @ V[:,:size]
             
             # compute eigen vectors and values for H
@@ -111,6 +111,7 @@ class Davidson:
                 # compute residuals
                 residual = self.A @ restart_vectors[:,j]- u[j] * restart_vectors[:,j]
                 if np.linalg.norm(residual) < self.tol:
+                    # check convergence
                     self.eigVec[j] = ritz_vector
                     self.residuals[j] = residual
                 
