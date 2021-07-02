@@ -11,7 +11,7 @@ import time
 n = 1200					# Dimension of matrix
 tol = 1e-7				# Convergence tolerance
 
-sparsity = 0.0001
+sparsity = 0.01
 A = np.zeros((n,n))
 
 for i in range(0,n):
