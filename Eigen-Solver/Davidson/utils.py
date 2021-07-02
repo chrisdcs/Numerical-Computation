@@ -129,6 +129,15 @@ class Davidson:
                 V[:,size] = q
                 # increament subspace size
                 size += 1
+                
+            val = np.linalg.norm(residuals.T,2,axis=1)
+            
+            # check convergence inside one Davidson iteration
+            if (val[:self.n_eig] < self.tol).all():
+                self.done = True
+                
+            if self.done:
+                return restart_vectors, u, residuals.T
         
         return restart_vectors, u, residuals.T
         
