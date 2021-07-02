@@ -14,8 +14,13 @@ import matplotlib.pyplot as plt
 def plot_results(err_ext,label_ext,err,label,title):
     
     fig,ax = plt.subplots()
-    ax.plot(np.log10(err_ext),'-o',label=label_ext)
-    ax.plot(np.log10(err),'-^', label=label)
+    if err_ext is not None and err is not None:
+        ax.plot(np.log10(err_ext),'-o',label=label_ext)
+        ax.plot(np.log10(err),'-^', label=label)
+    elif err_ext is not None:
+        ax.plot(np.log10(err_ext),'-o',label=label_ext)
+    else:
+        ax.plot(np.log10(err),'-^', label=label)
     ax.legend()
     ax.set_title(title)
     ax.set_xlabel('# of iterations')
