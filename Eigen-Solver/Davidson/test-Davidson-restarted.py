@@ -27,7 +27,7 @@ parser.add_argument("--init", type=str, default='random', help="initial guess ve
 parser.add_argument("--gamma", type=float, default = -0.1, help="extrapolation parameter  [-1,0)")
 parser.add_argument("--compare", type=int, default=1, 
                     help="0: no extrapolation, 1: extrapoltaion, 2: do both and compare")
-parser.add_argument("--plot", type=bool, default=False, help="whether or not plot residuals")
+parser.add_argument("--plot", type=str, default='False', help="whether or not plot residuals")
 args = parser.parse_args()
 
 print()
@@ -45,6 +45,9 @@ else:
     raise Exception("Invalid Bool Input")
 print("initial guess vectors:", args.init)
 print("extrapolation parameter gamma:", args.gamma)
+print("compare type:", args.compare)
+args.plot = True if args.plot == "True" else False
+print("plot type:", args.plot)
 
 tol = args.tol                          # Convergence tolerance
 data_file_name = args.data_file_name    #'data/TEM27623.mat'
