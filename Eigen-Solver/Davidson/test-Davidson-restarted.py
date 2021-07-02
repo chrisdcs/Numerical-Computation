@@ -6,7 +6,7 @@ Created on Tue May 18 12:08:10 2021
 """
 
 import numpy as np
-import scipy.sparse.linalg as LA
+import numpy.linalg as LA
 import scipy.sparse as sparse
 from utils import Davidson, plot_results, load_sparse_matrix
 import time
@@ -15,17 +15,19 @@ import argparse
 
 parser = argparse.ArgumentParser(description="initialize parameters")
 
-parser.add_argument("--tol", type=float, default=1e-14, help="tolerance for convergence")
+parser.add_argument("--tol", type=float, default=1e-12, help="tolerance for convergence")
 parser.add_argument("--data_file_name", type=str, default='data/HBAR_rhf.npz', 
                     help="file directory + file name, e.g. data/TEM27623")
-parser.add_argument("--n_eig", type=int, default=5, help="number of eigenvalues to solve")
-parser.add_argument("--n_guess", type=int, default=5, help="number of initial guess vectors")
-parser.add_argument("--k", type=int, default=20, help="k-step Davidson")
-parser.add_argument("--max_iter", type=int, default=500, help="number of max iteration")
+parser.add_argument("--n_eig", type=int, default=10, help="number of eigenvalues to solve")
+parser.add_argument("--n_guess", type=int, default=10, help="number of initial guess vectors")
+parser.add_argument("--k", type=int, default=10, help="k-step Davidson")
+parser.add_argument("--max_iter", type=int, default=100, help="number of max iteration")
 parser.add_argument("--descent_order", type=str, default='False', help="solve max/min eigenvalues")
 parser.add_argument("--init", type=str, default='random', help="initial guess vector type: 1. random 2. Euclidean")
 parser.add_argument("--gamma", type=float, default = -0.1, help="extrapolation parameter  [-1,0)")
-
+parser.add_argument("--compare", type=int, default=1, 
+                    help="0: no extrapolation, 1: extrapoltaion, 2: do both and compare")
+parser.add_argument("--plot", type=bool, default=False, help="whether or not plot residuals")
 args = parser.parse_args()
 
 print()
@@ -79,49 +81,58 @@ elif init == 'Euclidean':
 D = Davidson(A, n_eig, n_guess, steps, max_iter, tol, gamma, descent = descent_order)
 D_ = Davidson(A, n_eig, n_guess, steps, max_iter, tol, descent = descent_order)
 
-print("\nStart Extrapolated Version!")
-start_davidson = time.time()
+if args.compare == 1 or args.compare == 2:
+    print("\nStart Extrapolated Version!")
+    start_davidson_ext = time.time()
+    restart, eigenvals, errors = D.restarted_Davidson(V.copy(),True)
+    end_davidson_ext = time.time()
+    
+    # print results after finish
+    print("\nExtrapolated Davidson = :", eigenvals[:n_eig],";",
+    end_davidson_ext - start_davidson_ext, "seconds")
 
-
-"""
-    Initialization matters, if we use random vectors, converges very slowly
-"""
-restart, eigenvals, errors = D.restarted_Davidson(V.copy(),True)
-end_davidson = time.time()
-
-print("\n\nStart Original Version!")
-restart_,eigenvals_,errors_ = D_.restarted_Davidson(V.copy())
-
-print("davidson = ", eigenvals[:n_eig],";",
+if args.compare == 0 or args.compare == 2:
+    print("\n\nStart Original Version!")
+    start_davidson = time.time()
+    restart_,eigenvals_,errors_ = D_.restarted_Davidson(V.copy())
+    end_davidson = time.time()
+    
+    # print results after finish
+    print("\nDavidson = :", eigenvals_[:n_eig],";",
     end_davidson - start_davidson, "seconds")
 #%% Compare with package solvers
-# End of Numpy/scipy diagonalization. Print results.
+# End of Numpy diagonalization. Print results.
 start_numpy = time.time()
-if sparse.issparse(A):
-    E,Vec = LA.eigs(A)#,k=1,which='SM')
-    E = np.sort(E)
-    end_numpy = time.time()
-    print("scipy = ", E[:n_eig],";",
-      end_numpy - start_numpy, "seconds")
-else:
-    E,Vec = np.linalg.eig(A)
-    E = np.sort(E)
-    end_numpy = time.time()
-    print("numpy = ", E[:n_eig],";",
-      end_numpy - start_numpy, "seconds")
 
+if sparse.issparse(A):
+    A = A.todense()
+    
+E,Vec = np.linalg.eig(A)
+end_numpy = time.time()
+idx = E.argsort()
+if args.descent_order == 'True':
+    idx = idx[::-1]
+    E = E[idx]
+    print("numpy = ", E[:n_eig], ";",
+          end_numpy - start_numpy, "seconds")
+else:
+    E = E[idx]
+    print("numpy = ", E[:n_eig], ";",
+          end_numpy - start_numpy, "seconds")
 #%% plot results
-for i in range(n_eig):
-    err_ext = np.array(errors[:,i])
-    label_ext = str(steps)+'-step $γ = {}$'.format(args.gamma)
-    # title = 'eigenvalue' + str(i+1)
-    title = None
-    
-    err = np.array(errors_[:,i])
-    label = str(steps)+'-step'
-    
-    common = 0#max(err_ext.min(), err.min())
-    err_ext = err_ext[err_ext >= common]
-    err = err[err >= common]
-    
-    plot_results(err_ext, label_ext, err, label, title)
+if args.plot:
+    for i in range(n_eig):
+        if args.compare == 1 or args.compare == 2:
+            err_ext = np.array(errors[:,i])
+        else:
+            err_ext = None
+        label_ext = str(steps)+'-step $γ = {}$'.format(args.gamma)
+        title = None
+        
+        if args.compare == 0 or args.compare == 2:
+            err = np.array(errors_[:,i])
+        else:
+            err = None
+        label = str(steps)+'-step'
+        
+        plot_results(err_ext, label_ext, err, label, title)
