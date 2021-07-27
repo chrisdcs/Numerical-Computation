@@ -123,7 +123,26 @@ class Davidson:
                 residuals[:,j] = residual
                 
                 # preconditioning
-                q = residual/(u[j]-self.A[j,j])
+                # *** ADDED 7/27/2021 BY ZWW:
+                # *** builds preconditioner as a matrix, such that
+                # *** |q> == (theta*I - diag(A))^-1 |r>
+                # *** where I is the identity matrix of dimension(A)
+                # *** Also added logic to try and avoid singularities when/if 'denom' -> 0
+                diagA=np.diag(A)
+                thetas=np.repeat(u[j],self.m)
+                denom=thetas-diagA
+                for xx in range(self.m):
+                    if (abs(denom[xx]) < 0.0001):
+                        denom[xx]= -0.0001 if denom[xx] < 0.0 else 0.0001
+                    denom[xx]=1.0/denom[xx]
+                denom=np.diag(np.diag(denom)) # at this point, the full (theta*I - diag(A))^-1 matrix
+                q=denom @ residual
+                        
+                #q = residual/(u[j]-self.A[j,j])
+
+
+                        
+                 
                 
                 # expand subspace
                 V[:,size] = q
