@@ -36,7 +36,8 @@ To set up the algorithm for testing, a list of parameters need to be set properl
 9. --gamma:               extrapolation parameter
 10. --compare:            0: only original Davidson 1: only extrapolated Davidson 2: both original and extrapolation
 11. --plot:               True or False, plot residual history
-SYNOPSIS
+
+SYNOPSIS:
 ```
 python test-Davidson-restarted.py [--tol] [--data_file_name] [--n_eig] [--n_guess] [--k] 
                                   [--max_iter] [--descent_order] [--init] [--gamma] [--compare] [--plot]
