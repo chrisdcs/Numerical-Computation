@@ -38,8 +38,8 @@ To set up the algorithm for testing, a list of parameters need to be set properl
 11. --plot:               True or False, plot residual history
 SYNOPSIS
 ```
-python test-Davidson-restarted [--tol] [--data_file_name] [--n_eig] [--n_guess] [--k] 
-                               [--max_iter] [--descent_order] [--init] [--gamma] [--compare] [--plot]
+python test-Davidson-restarted.py [--tol] [--data_file_name] [--n_eig] [--n_guess] [--k] 
+                                  [--max_iter] [--descent_order] [--init] [--gamma] [--compare] [--plot]
 
 example: python test-Davidson-restarted.py --tol 1e-10 --data_file_name data/HBAR_rhf.npz --n_eig 10 --n_guess 10 --k 50 --max_iter 40 --descent_order False --init random --gamma -0.5 --compare 2 --plot True
 ```
