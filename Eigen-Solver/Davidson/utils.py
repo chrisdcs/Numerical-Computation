@@ -76,8 +76,6 @@ class Davidson:
         for i in range(1,self.k):
             # iterate k-step Davidson
             
-            if (i+1) % 10 == 0:
-                print("    Step", i+1, "error:", np.linalg.norm(val[:self.n_eig]))
             
             # orthogonalize [V,t]
             Q,_ = np.linalg.qr(V[:,:size])
@@ -135,8 +133,13 @@ class Davidson:
                 V[:,size] = q
                 # increament subspace size
                 size += 1
-                
+            
+            # compute residual norm, i.e. error
             val = np.linalg.norm(residuals.T,2,axis=1)
+            
+            # print step and error periodically
+            if (i+1) % 10 == 0:
+                print("    Step", i+1, "error:", np.linalg.norm(val[:self.n_eig]))
              
             # check convergence inside one Davidson iteration
             if (val[:self.n_eig] < self.tol).all():
