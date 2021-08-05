@@ -111,10 +111,12 @@ class Davidson:
                 
                 # compute ritz vectors
                 ritz_vector = V[:,:curr_size] @ v[:,j]
+                ritz_vector = np.real(ritz_vector)
                 restart_vectors[:,j] = ritz_vector
                 
                 # compute residuals
                 residual = self.A @ restart_vectors[:,j]- u[j] * restart_vectors[:,j]
+                residual = np.real(residual)
                 if np.linalg.norm(residual) < self.tol:
                     # check convergence
                     self.eigVec[j] = ritz_vector
@@ -123,9 +125,14 @@ class Davidson:
                 residuals[:,j] = residual
                 
                 # preconditioning
-                q = residual/(u[j]-self.A[j,j])
+                # q = residual/(u[j]-self.A[j,j])
+                if sparse.issparse(self.A):
+                    q = residual/(u[j] - np.diag(self.A.todense()))
+                else:
+                    q = residual/(u[j] - np.diag(self.A))
                 
                 # expand subspace
+                q = np.real(q)
                 V[:,size] = q
                 # increament subspace size
                 size += 1
