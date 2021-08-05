@@ -124,8 +124,7 @@ class Davidson:
                 
                 residuals[:,j] = residual
                 
-                # preconditioning
-                # q = residual/(u[j]-self.A[j,j])
+                # diagonal preconditioning
                 if sparse.issparse(self.A):
                     q = residual/(u[j] - np.diag(self.A.todense()))
                 else:
